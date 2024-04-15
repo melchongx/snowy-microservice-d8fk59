@@ -1,6 +1,4 @@
-
-import logo from "./logo.svg";
-import "./App.css";
+import "./styles.css";
 import { useState } from "react";
 const tempMusicData = [
   {
@@ -42,52 +40,123 @@ const tempPlaylist = [
     genre: "Jazz",
   },
 ];
-function App() {
+
+function NavBar({ children }) {
+  return (
+    <nav className="container">
+      <Logo />
+      <Search />
+      {children}
+    </nav>
+  );
+}
+
+function Logo() {
+  return <h1 style={{ textAlign: "center" }}>Music App</h1>;
+}
+
+function NumberResult({ music }) {
+  return (
+    <p>
+      Found <strong>{music.length}</strong> results
+    </p>
+  );
+}
+
+function Search() {
   const [query, setQuery] = useState("");
+
+  return (
+    <input
+      className="search"
+      type="text"
+      placeholder="Search movies..."
+      value={query}
+      onChange={(e) => setQuery(e.target.value)}
+    />
+  );
+}
+
+function Music({ music }) {
+  return (
+    <div className="container">
+      <h2>Music List</h2>
+
+      <ul>
+        {musics.map((music) => (
+          <li key={music.id}>
+            {music.title} by {music.artist} ({music.genre})<button>♥️</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function Box({ children }) {
+  return <div className="container">{children}</div>;
+}
+
+function MusicListBox() {
   const [musics, setMusic] = useState(tempMusicData);
+  return <Music musics={musics} />;
+}
+
+function PlaylistBox() {
   const [playlist, setPlaylist] = useState(tempPlaylist);
   const addToPlaylist = (music) => {
     setPlaylist([...playlist, music]);
   };
-  return (
-    <div>
-      <nav>
-        <h1 style={{ textAlign: "center" }}>Music App</h1>
-        <input
-          className="search"
-          type="text"
-          placeholder="Search movies..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <p>
-        Found <strong>X</strong> results
-      </p>
-      </nav>
-      <div className="container">
-        <div className="container">
-          <h2>Music List</h2>
 
-          <ul>
-            {musics.map((music) => (
-              <li key={music.id}>
-                {music.title} by {music.artist} ({music.genre})
-                <button>♥️</button>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="container">
-          <h2>Playlist</h2>
-          <ul>
-            {playlist.map((music) => (
-              <li key={music.id}>
-                {music.title} by {music.artist}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+  return <Playlist playlist={playlist} />;
+}
+
+function Playlist() {
+  const [playlist, setPlaylist] = useState(tempPlaylist);
+  const addToPlaylist = (music) => {
+    setPlaylist([...playlist, music]);
+  };
+
+  return (
+    <div className="container">
+      <h2>Playlist</h2>
+      <ul>
+        {playlist.map((music) => (
+          <li key={music.id}>
+            {music.title} by {music.artist}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
+
+function Main({ children }) {
+  return (
+    <div className="container">
+      <MusicListBox />
+      <PlaylistBox />
+      {children}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <>
+      <NavBar>
+        <NumberResult music={music} />
+      </NavBar>
+      <Main>
+        <Box>
+          <Music music={music} />
+        </Box>
+        <Box>
+          <Playlist />
+        </Box>
+      </Main>
+    </>
+  );
+}
+
+export default App;
